@@ -1,17 +1,28 @@
 #bpmn {
   border: 1px solid #ccc;
   border-radius: 8px;
+  height: 300px;
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #f06;
+    // animation: mymove 5s infinite;
+    position: relative;
+  }
 }
 
-.bar {
-  fill: #0080FF;
-}
+// @keyframes mymove {
+//   0% {
+//     transform: translate(0, 0);
+//   }
 
-.bar:hover {
-  fill: #003366;
-}
+//   50% {
+//     transform: translate(400px, 100px);
+//   }
 
-.text {
-  fill: white;
-  font-family: sans-serif;
-}
+//   100% {
+//     transform: translate(300px, 200px);
+//   }
+// }

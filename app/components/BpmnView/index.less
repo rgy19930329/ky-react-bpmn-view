@@ -1,28 +1,14 @@
-#bpmn {
+.bpmn-wrapper {
   border: 1px solid #ccc;
   border-radius: 8px;
   height: 300px;
-
-  .dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #f06;
-    // animation: mymove 5s infinite;
-    position: relative;
-  }
 }
 
-// @keyframes mymove {
-//   0% {
-//     transform: translate(0, 0);
-//   }
-
-//   50% {
-//     transform: translate(400px, 100px);
-//   }
-
-//   100% {
-//     transform: translate(300px, 200px);
-//   }
-// }
+.bpmn-animate-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #f06;
+  position: relative;
+  z-index: 9999;
+}

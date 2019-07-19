@@ -1,46 +1,66 @@
 /**
  * @desc bpmn-view 流程图解析器
  * @author ranguangyu
- * @date 2019-7-5
+ * @date 2019-7-19
  */
 
 import "./index.less";
 import React from "react";
-// import PropTypes from "prop-types";
-// import "svgjs";
-import { Motion, spring } from 'react-motion';
+import { autoWidth, autoHeight, createKeyframes, ways2config, nodes2ways } from "./utils";
+// import { xml } from "./mock";
+import xml2js from "xml2js";
+import BpmnViewer from "bpmn-js/lib/Viewer";
+
+const parser = new xml2js.Parser({ explicitArray: false });
 
 export default class BpmnView extends React.Component {
 
   state = {
-    ways: [
-      { x: 0, y: 0 },
-      { x: 400, y: 100 },
-      { x: 300, y: 200 },
-    ]
-  }
+    bpmnId: `bpmn_${Date.now()}`,
+    motionName: `motion_flow_${Date.now()}`,
+    width: autoWidth(this.props.xmlStr),
+    height: autoHeight(this.props.xmlStr),
+  };
 
   componentDidMount() {
-    // var draw = SVG("bpmn").size(300, 300);
-    // draw.rect(50, 100).move(100, 100).attr({fill: "#f06"});
+    const { motionNodes, xmlStr } = this.props;
+    parser.parseString(xmlStr, (err, json) => {
+      this.renderViewer(xmlStr);
+      if (motionNodes.length > 1) {
+        let ways = nodes2ways(json, motionNodes);
+        let config = ways2config(ways);
+        config && createKeyframes(this.state.motionName, config);
+      }
+    });
   }
 
+  renderViewer = (xml) => {
+    const viewer = new BpmnViewer({
+      container: `#${this.state.bpmnId}`,
+    });
+    viewer.importXML(xml, (err) => {
+      if (!err) {
+        viewer.get("canvas").zoom("fit-viewport");
+      } else {
+        console.error("error: ", err);
+      }
+    });
+  };
+
   render() {
+    const { bpmnId, motionName, width, height } = this.state;
     return (
-      <div>
-        <h3>流程图</h3>
-        <div id="bpmn">
-          <Motion
-            defaultStyle={{x: 0, y: 0}}
-            style={{x: spring(400, { precision: 1 }), y: spring(200)}}
-          >
-            {value => (
-              <div
-                className="dot"
-                style={{transform: `translate(${value.x}px,${value.y}px)`}}></div>
-            )}
-          </Motion>
-        </div>
+      <div
+        id={`${bpmnId}`}
+        className="bpmn-wrapper"
+        style={{ width, height }}
+      >
+        {this.props.motionNodes.length > 1 &&
+          <div
+            className="bpmn-animate-dot"
+            style={{animation: `${motionName} 5s linear infinite`}}
+          />
+        }
       </div>
     )
   }

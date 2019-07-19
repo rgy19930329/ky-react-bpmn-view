@@ -57,10 +57,8 @@ const ways2config = (ways) => {
  */
 const nodes2ways = (json, nodes) => {
   let shapes = json["definitions"]["bpmndi:BPMNDiagram"]["bpmndi:BPMNPlane"]["bpmndi:BPMNShape"];
-  // shapes = shapes.filter(item => {
-  //   return nodes.indexOf(item["$"]["id"]) !== -1;
-  // });
-  console.log(shapes, nodes);
+  let edges = json["definitions"]["bpmndi:BPMNDiagram"]["bpmndi:BPMNPlane"]["bpmndi:BPMNEdge"];
+  console.log(shapes, edges);
   let shapesSort = nodes.map(id => {
     let shape = shapes.filter(item => item["$"]["id"] === id);
     return shape.length > 0 ? shape[0] : null;

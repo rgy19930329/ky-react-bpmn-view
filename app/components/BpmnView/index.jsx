@@ -49,16 +49,17 @@ export default class BpmnView extends React.Component {
 
   render() {
     const { bpmnId, motionName, width, height } = this.state;
+    const { motionNodes } = this.props;
     return (
       <div
         id={`${bpmnId}`}
         className="bpmn-wrapper"
         style={{ width, height }}
       >
-        {this.props.motionNodes.length > 1 &&
+        {motionNodes.length > 1 &&
           <div
             className="bpmn-animate-dot"
-            style={{animation: `${motionName} 5s linear infinite`}}
+            style={{animation: `${motionName} ${motionNodes.length - 1}s linear infinite`}}
           />
         }
       </div>

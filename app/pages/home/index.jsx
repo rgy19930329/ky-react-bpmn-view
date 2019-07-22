@@ -17,8 +17,10 @@ export default class Home extends React.Component {
 					xmlStr={xml}
 					motionNodes={[
 						// "StartEvent_1y45yut_di",
-						// "UserTask_0yxxx4c_di",
-						// "EndEvent_15pydlw_di",
+						// "Task_1hcentk_di",
+						// "ExclusiveGateway_15hu1pt_di",
+						// "Task_0cfrjuy_di",
+						// "EndEvent_0ls3v4g_di",
 
 						"StartEvent_1y45yut_di",
 						"Task_1hcentk_di",

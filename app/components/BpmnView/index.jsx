@@ -6,10 +6,16 @@
 
 import "./index.less";
 import React from "react";
-import { autoWidth, autoHeight, createKeyframes, ways2config, nodes2ways } from "./utils";
-// import { xml } from "./mock";
+import {
+  autoWidth,
+  autoHeight,
+  createKeyframes, 
+  ways2config, 
+  nodes2ways,
+} from "./utils";
 import xml2js from "xml2js";
 import BpmnViewer from "bpmn-js/lib/Viewer";
+import classnames from "classnames";
 
 const parser = new xml2js.Parser({ explicitArray: false });
 
@@ -20,6 +26,7 @@ export default class BpmnView extends React.Component {
     motionName: `motion_flow_${Date.now()}`,
     width: autoWidth(this.props.xmlStr),
     height: autoHeight(this.props.xmlStr),
+    hasAnimation: false,
   };
 
   componentDidMount() {
@@ -29,7 +36,10 @@ export default class BpmnView extends React.Component {
       if (motionNodes.length > 1) {
         let ways = nodes2ways(json, motionNodes);
         let config = ways2config(ways);
-        config && createKeyframes(this.state.motionName, config);
+        if (config) {
+          createKeyframes(this.state.motionName, config);
+          this.setState({ hasAnimation: true });
+        }
       }
     });
   }
@@ -48,7 +58,7 @@ export default class BpmnView extends React.Component {
   };
 
   render() {
-    const { bpmnId, motionName, width, height } = this.state;
+    const { bpmnId, motionName, width, height, hasAnimation } = this.state;
     const { motionNodes } = this.props;
     return (
       <div
@@ -56,12 +66,13 @@ export default class BpmnView extends React.Component {
         className="bpmn-wrapper"
         style={{ width, height }}
       >
-        {motionNodes.length > 1 &&
-          <div
-            className="bpmn-animate-dot"
-            style={{animation: `${motionName} ${motionNodes.length - 1}s linear infinite`}}
-          />
-        }
+        <div
+          className={classnames({
+            "bpmn-animate-dot": true,
+            "hide": !hasAnimation,
+          })}
+          style={{animation: `${motionName} ${motionNodes.length - 1}s linear infinite`}}
+        />
       </div>
     )
   }

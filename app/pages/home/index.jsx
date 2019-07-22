@@ -20,15 +20,15 @@ export default class Home extends React.Component {
 						// "UserTask_0yxxx4c_di",
 						// "EndEvent_15pydlw_di",
 
-						// "StartEvent_1y45yut_di",
-						// "Task_1hcentk_di",
+						"StartEvent_1y45yut_di",
+						"Task_1hcentk_di",
 						"ExclusiveGateway_15hu1pt_di",
 						"Task_1206bgx_di",
-						// "ExclusiveGateway_0zycfrc_di",
-						// "IntermediateThrowEvent_1pkch9y_di",
-						// "EndEvent_08h2usd_di",
-						// "IntermediateThrowEvent_1pkch9y_di",
-						// "EndEvent_08h2usd_di",
+						"ExclusiveGateway_0zycfrc_di",
+						"IntermediateThrowEvent_1pkch9y_di",
+						"EndEvent_08h2usd_di",
+						"IntermediateThrowEvent_1pkch9y_di",
+						"EndEvent_08h2usd_di",
 					]}
 				/>
 			</div>

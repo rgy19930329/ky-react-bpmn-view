@@ -50,26 +50,83 @@ const ways2config = (ways) => {
 };
 
 /**
+ * @desc 通过起始节点获取edges对应ways
+ * @param {} sequenceFlow 
+ * @param {*} edges 
+ * @param {*} { startNode, endNode } 
+ */
+const getEdgeWays = (sequenceFlow, edges, { startNode, endNode }) => {
+  let { $: { bpmnElement: startNodeId } } = startNode;
+  let { $: { bpmnElement: endNodeId } } = endNode;
+  let direction = 1; // 正向
+  let targetShapes = sequenceFlow.filter(item => {
+    let { sourceRef, targetRef } = item["$"];
+    if (sourceRef === startNodeId && targetRef === endNodeId) {
+      direction = 1;
+      return item;
+    } else if (sourceRef === endNodeId && targetRef === startNodeId){
+      direction = -1;
+      return item;
+    }
+  });
+  let targetEdges = edges.filter(item => {
+    return item["$"]["bpmnElement"] === targetShapes[0]["$"]["id"];
+  });
+  let ways = targetEdges[0]["omgdi:waypoint"];
+  ways = ways.slice(1, -1); // 掐头去尾
+  return direction === 1 ? ways : ways.reverse();
+};
+
+/**
  * @desc 通过过程节点获取路径列表
  * @param {String} xml 数据源
  * @param {Array} nodes 
  * @param {Array}
  */
 const nodes2ways = (json, nodes) => {
+  let sequenceFlow = json["definitions"]["process"]["sequenceFlow"];
   let shapes = json["definitions"]["bpmndi:BPMNDiagram"]["bpmndi:BPMNPlane"]["bpmndi:BPMNShape"];
   let edges = json["definitions"]["bpmndi:BPMNDiagram"]["bpmndi:BPMNPlane"]["bpmndi:BPMNEdge"];
-  console.log(shapes, edges);
   let shapesSort = nodes.map(id => {
     let shape = shapes.filter(item => item["$"]["id"] === id);
     return shape.length > 0 ? shape[0] : null;
   });
   shapesSort = shapesSort.filter(item => !!item);
-  console.log(shapesSort);
-  let ways = shapesSort.map(item => {
-    const { x, y, width, height } = item["omgdc:Bounds"]["$"];
-    return {
-      x: Number(x) - 5 + Number(width) / 2,
-      y: Number(y) + 5 + Number(height) / 2,
+  let edgesAndShapes = [];
+  if (shapesSort.length < 2) {
+    return [];
+  }
+  for (let i = 0; i < shapesSort.length - 1; i++) {
+    if (edgesAndShapes.length > 0) {
+      if (shapesSort[i]["$"]["id"] !== edgesAndShapes[edgesAndShapes.length - 1]["$"]["id"]) {
+        edgesAndShapes.push(shapesSort[i]);
+      }
+    } else {
+      edgesAndShapes.push(shapesSort[i]);
+    }
+    let ways = getEdgeWays(sequenceFlow, edges, {
+      startNode: shapesSort[i],
+      endNode: shapesSort[i + 1],
+    });
+    if (ways.length > 0) {
+      edgesAndShapes = edgesAndShapes.concat(ways);
+    }
+    edgesAndShapes.push(shapesSort[i + 1]);
+  }
+  console.log("edgesAndShapes", edgesAndShapes);
+  let ways = edgesAndShapes.map(item => {
+    if (item["omgdc:Bounds"]) {
+      const { x, y, width, height } = item["omgdc:Bounds"]["$"];
+      return {
+        x: Number(x) - 5 + Number(width) / 2,
+        y: Number(y) + 5 + Number(height) / 2,
+      }
+    } else {
+      const { x, y } = item["$"];
+      return {
+        x: Number(x) - 5,
+        y: Number(y) + 5,
+      }
     }
   });
   return ways;

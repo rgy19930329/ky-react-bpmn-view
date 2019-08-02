@@ -73,7 +73,8 @@ const getEdgeWays = (sequenceFlow, edges, { startNode, endNode }) => {
     return item["$"]["bpmnElement"] === targetShapes[0]["$"]["id"];
   });
   let ways = targetEdges[0]["omgdi:waypoint"];
-  ways = ways.slice(1, -1); // 掐头去尾
+  // ways = ways.slice(1, -1); // 掐头去尾
+  ways = ways.slice(0, -1);
   return direction === 1 ? ways : ways.reverse();
 };
 

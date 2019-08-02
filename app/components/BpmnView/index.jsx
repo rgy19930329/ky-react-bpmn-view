@@ -19,11 +19,14 @@ import classnames from "classnames";
 
 const parser = new xml2js.Parser({ explicitArray: false });
 
+const ID_PREFIX = "bpmn_";
+const MOTION_PREFIX = "motion_flow_";
+
 export default class BpmnView extends React.Component {
 
   state = {
-    bpmnId: `bpmn_${Date.now()}`,
-    motionName: `motion_flow_${Date.now()}`,
+    bpmnId: `${ID_PREFIX}${Date.now()}`,
+    motionName: `${MOTION_PREFIX}${Date.now()}`,
     width: autoWidth(this.props.xmlStr),
     height: autoHeight(this.props.xmlStr),
     hasAnimation: false,
@@ -39,6 +42,24 @@ export default class BpmnView extends React.Component {
         if (config) {
           createKeyframes(this.state.motionName, config);
           this.setState({ hasAnimation: true });
+        }
+      }
+    });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { motionNodes, xmlStr } = nextProps;
+    parser.parseString(xmlStr, (err, json) => {
+      if (motionNodes.length > 1) {
+        let ways = nodes2ways(json, motionNodes);
+        let config = ways2config(ways);
+        if (config) {
+          this.setState({
+            motionName: `${MOTION_PREFIX}${Date.now()}`,
+            hasAnimation: true,
+          }, () => {
+            createKeyframes(this.state.motionName, config);
+          });
         }
       }
     });

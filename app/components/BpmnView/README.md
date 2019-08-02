@@ -5,5 +5,8 @@
 ```javascript
 import BpmnView from "@components/BpmnView";
 
-<BpmnView xmlStr="xxx" />
+<BpmnView
+  xmlStr="xxx"
+  motionNodes={[]}
+/>
 ```
